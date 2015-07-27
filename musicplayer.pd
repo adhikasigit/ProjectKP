@@ -1,0 +1,53 @@
+#N canvas 619 82 656 505 10;
+#X obj 61 64 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
+;
+#X msg 57 134 \; pd dsp \$1;
+#X obj 322 70 openpanel;
+#X msg 276 132 start;
+#X msg 267 158 stop;
+#X msg 329 101 open \$1;
+#X obj 358 186 readsf~ 2;
+#X obj 357 435 dac~ 1 2;
+#X obj 442 208 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 330 31 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 35 243 env~;
+#X obj 105 244 env~;
+#X obj 22 313 vu 15 120 empty empty -1 -8 0 10 -66577 -1 1 0;
+#X obj 98 316 vu 15 120 empty empty -1 -8 0 10 -66577 -1 1 0;
+#X obj 17 277 - 100;
+#X obj 88 278 - 100;
+#X obj 287 364 *~ 0.1;
+#X obj 438 368 *~ 0.1;
+#X obj 229 229 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 0 1;
+#X obj 528 231 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 0 1;
+#X text 548 272 Right channel volume;
+#X text 245 267 Left channel volume;
+#X msg 440 141 seek \$1;
+#X obj 444 99 hsl 128 15 0 320 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X msg 234 105;
+#X connect 0 0 1 0;
+#X connect 2 0 5 0;
+#X connect 3 0 6 0;
+#X connect 4 0 6 0;
+#X connect 5 0 6 0;
+#X connect 6 0 10 0;
+#X connect 6 0 16 0;
+#X connect 6 1 11 0;
+#X connect 6 1 17 0;
+#X connect 6 2 8 0;
+#X connect 9 0 2 0;
+#X connect 10 0 14 0;
+#X connect 11 0 15 0;
+#X connect 14 0 12 0;
+#X connect 15 0 13 0;
+#X connect 16 0 7 0;
+#X connect 17 0 7 1;
+#X connect 18 0 16 1;
+#X connect 19 0 17 1;
+#X connect 22 0 6 0;
+#X connect 23 0 22 0;
