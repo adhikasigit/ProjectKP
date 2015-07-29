@@ -1,9 +1,9 @@
-#N canvas 0 0 691 670 10;
+#N canvas 318 0 691 670 10;
 #X obj 61 64 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
 #X msg 57 134 \; pd dsp \$1;
 #X obj 322 70 openpanel;
-#X msg 276 132 start;
+#X msg 283 127 start;
 #X msg 267 158 stop;
 #X msg 329 101 open \$1;
 #X obj 358 186 readsf~ 2;
@@ -29,7 +29,6 @@
 #X msg 440 141 seek \$1;
 #X obj 444 99 hsl 128 15 0 320 0 0 empty empty empty -2 -8 0 10 -262144
 -1 -1 0 1;
-#X msg 234 105;
 #X msg 507 394 connect 127.0.0.1 12000;
 #X obj 500 443 sendOSC;
 #X floatatom 214 413 5 0 0 0 - - -;
@@ -38,7 +37,14 @@
 #X obj 336 631 print;
 #X obj 203 155 switch~;
 #X obj 368 484 bang;
-#X msg 479 533 send /test \$1 \$2;
+#X msg 484 514 send /test \$1 \$2;
+#X obj 690 462 OSCroute /test;
+#X obj 557 485 print "test" \$1;
+#X floatatom 607 590 5 0 0 0 - - -;
+#X floatatom 681 583 5 0 0 0 - - -;
+#X obj 734 533 print "received_something_else";
+#X obj 634 540 unpack f f;
+#X obj 684 380 dumpOSC 12001;
 #X connect 0 0 1 0;
 #X connect 2 0 5 0;
 #X connect 3 0 6 0;
@@ -57,16 +63,22 @@
 #X connect 16 0 7 0;
 #X connect 17 0 7 1;
 #X connect 18 0 16 1;
-#X connect 18 0 27 0;
+#X connect 18 0 26 0;
 #X connect 19 0 17 1;
-#X connect 19 0 28 0;
+#X connect 19 0 27 0;
 #X connect 22 0 6 0;
 #X connect 23 0 22 0;
-#X connect 25 0 26 0;
-#X connect 27 0 29 0;
+#X connect 24 0 25 0;
+#X connect 26 0 28 0;
+#X connect 27 0 31 0;
+#X connect 27 0 28 1;
 #X connect 28 0 32 0;
-#X connect 28 0 29 1;
-#X connect 29 0 33 0;
-#X connect 29 0 30 0;
-#X connect 32 0 29 0;
-#X connect 33 0 26 0;
+#X connect 28 0 29 0;
+#X connect 31 0 28 0;
+#X connect 32 0 25 0;
+#X connect 33 0 34 0;
+#X connect 33 0 38 0;
+#X connect 33 1 37 0;
+#X connect 38 0 35 0;
+#X connect 38 1 36 0;
+#X connect 39 0 33 0;
