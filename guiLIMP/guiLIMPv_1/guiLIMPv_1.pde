@@ -90,29 +90,29 @@ void setup() {
                ;
      
   equalizer = cp5.addDropdownList("Equalizer")
-          .setPosition(100, 100)
+          .setPosition(420, 190)
           ;
   customize(equalizer); 
-  //equalizer.setIndex(10);
+  equalizer.setIndex(0);
     
      
 }
 
-void customize(DropdownList ddl) {
+void customize(DropdownList eq) {
   // a convenience function to customize a DropdownList
-  ddl.setBackgroundColor(color(190));
-  ddl.setItemHeight(20);
-  ddl.setBarHeight(15);
-  ddl.captionLabel().set("Equalizer");
-  ddl.captionLabel().style().marginTop = 3;
-  ddl.captionLabel().style().marginLeft = 3;
-  ddl.valueLabel().style().marginTop = 3;
-  for (int i=0;i<40;i++) {
-    ddl.addItem("item "+i, i);
-  }
-  //ddl.scroll(0);
-  ddl.setColorBackground(color(60));
-  ddl.setColorActive(color(255, 128));
+  eq.setBackgroundColor(color(255));
+  eq.setItemHeight(15);
+  eq.setWidth(40);
+  eq.setBarHeight(15);
+  eq.captionLabel().set("Equalizer");
+  eq.captionLabel().style().marginTop = 3;
+  eq.captionLabel().style().marginLeft = 3;
+  eq.valueLabel().style().marginTop = 3;
+  eq.setColorBackground(color(50, 50, 50));
+  eq.setColorActive(color(90, 90, 90));
+  eq.setColorForeground(color(90, 90, 90));
+  
+  eq.addItem("Pop", 0);eq.addItem("Rock", 1);eq.addItem("Jazz", 2);
 }
 
 void draw() {
@@ -128,32 +128,9 @@ void draw() {
    
  }
  
+ println(equalizer.getValue());
+ 
 }
-
-
-
-
-public void controlEvent(ControlEvent theEvent) {
-  println(theEvent.getController().getName());
-  
-}
-
-
-public void Play(int theValue) {
-  
-  
-}
-
-public void Next(int theValue) {
-  
-  
-}
-
-public void Prev(int theValue) {
-  
-  
-}
-
 
 
 
