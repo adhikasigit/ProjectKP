@@ -45,14 +45,14 @@
 #X obj 72 482 udpreceive 12002;
 #X obj 73 520 unpackOSC;
 #X obj 72 560 routeOSC /limp;
-#X obj 53 618 send pause;
+#X obj 61 622 send pause;
 #X obj 192 619 send next;
 #X obj 262 618 send prev;
 #X obj 156 8 receive pause;
 #X obj 73 590 routeOSC /pause /play /next /prev;
 #X obj 122 619 send play;
 #X obj 238 24 receive play;
-#N canvas 724 160 450 300 pause 1;
+#N canvas 724 160 450 300 pause 0;
 #X obj 110 146 switch~;
 #X msg 91 63 0;
 #X msg 145 67 1;
@@ -63,6 +63,7 @@
 #X connect 3 0 1 0;
 #X connect 4 0 2 0;
 #X restore 184 60 pd pause;
+#X obj 20 621 print;
 #X connect 0 0 1 0;
 #X connect 2 0 5 0;
 #X connect 3 0 6 0;
@@ -101,6 +102,7 @@
 #X connect 37 0 42 0;
 #X connect 41 0 45 0;
 #X connect 42 0 38 0;
+#X connect 42 0 46 0;
 #X connect 42 1 43 0;
 #X connect 42 2 39 0;
 #X connect 42 3 40 0;
