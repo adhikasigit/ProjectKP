@@ -29,7 +29,7 @@
 #X msg 440 141 seek \$1;
 #X obj 444 99 hsl 128 15 0 320 0 0 empty empty empty -2 -8 0 10 -262144
 -1 -1 0 1;
-#X msg 530 390 connect 127.0.0.1 12000;
+#X msg 507 394 connect 127.0.0.1 12000;
 #X obj 500 443 sendOSC;
 #X floatatom 214 413 5 0 0 0 - - -;
 #X floatatom 444 437 5 0 0 0 - - -;
@@ -38,26 +38,22 @@
 #X obj 437 242 switch~;
 #X obj 368 484 bang;
 #X msg 484 514 send /test \$1 \$2;
-#X obj 696 462 OSCroute /test;
+#X obj 690 462 OSCroute /test;
 #X obj 557 485 print "test" \$1;
 #X floatatom 607 590 5 0 0 0 - - -;
 #X floatatom 681 583 5 0 0 0 - - -;
-#X obj 744 533 print "received_something_else";
+#X obj 734 533 print "received_something_else";
 #X obj 634 540 unpack f f;
-#X obj 697 391 dumpOSC 12001;
+#X obj 684 380 dumpOSC 12001;
 #X obj 195 83 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#N canvas 724 160 450 300 (subpatch) 1;
-#X obj 110 146 switch~;
-#X msg 91 63 0;
-#X msg 145 67 1;
-#X obj 78 16 inlet;
-#X obj 159 17 inlet;
-#X connect 1 0 0 0;
-#X connect 2 0 0 0;
-#X connect 3 0 1 0;
-#X connect 4 0 2 0;
-#X restore 152 64 pd;
+#N canvas 711 86 450 300 (subpatch) 1;
+#X msg 76 57 0;
+#X msg 125 57 1;
+#X obj 103 134 switch~;
+#X connect 0 0 2 0;
+#X connect 1 0 2 0;
+#X restore 136 41 pd;
 #X connect 0 0 1 0;
 #X connect 2 0 5 0;
 #X connect 3 0 6 0;
