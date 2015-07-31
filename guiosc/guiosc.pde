@@ -154,13 +154,24 @@ void draw() {
   background(LIMPbackground);
   
  if(play.isPressed()){
-   
- }
+   if(playID){
+   OscMessage myOscMessage = new OscMessage("/limp/play");
+   oscP5.send(myOscMessage, myRemoteLocation);
+   playID = true;
+   }
+   else{
+   OscMessage myOscMessage = new OscMessage("/limp/pause");
+   oscP5.send(myOscMessage, myRemoteLocation);
+   playID = false;
+   }
  if(next.isPressed()){
-   
+   OscMessage myOscMessage = new OscMessage("/limp/next");
+   oscP5.send(myOscMessage, myRemoteLocation);
  } 
+ 
  if(prev.isPressed()){
-   
+   OscMessage myOscMessage = new OscMessage("/limp/prev");
+   oscP5.send(myOscMessage, myRemoteLocation);
  }
  
  println(equalizer.getValue());
@@ -317,6 +328,11 @@ public class SecondApplet extends PApplet {
       return true;
     return false;
   }
+  void oscEvent(OscMessage theOscMessage) {
+  // get and print the address pattern and the typetag of the received OscMessage
+  println("### received an osc message with addrpattern "+theOscMessage.addrPattern()+" and typetag "+theOscMessage.typetag());
+  theOscMessage.print();
+}
 }
 
 
