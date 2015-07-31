@@ -6,14 +6,17 @@ float step = 0.1;
 float theta = 75;
 color cHandle = 0xCC006699;
 float menu2X = width/2, menu2Y= height/2;
+float menu2Angle;
 float panWidth = 30, panPos = 45;
 boolean overPanL, overPanR;
 float tolerance = 10;
 int startMs, currentMs;
-float timeIn = 3000, timeOut = 3000;
+float timeIn = 2000, timeOut = 2000;
 float handX, handY;
-float sliderPosX,sliderPosY;
-float startPosX,startPosY;
+float sliderPosX, sliderPosY;
+float sliderStartPosX, sliderStartPosY;
+float sliderAngle, sliderWidth = panWidth;
+static final int PAN_DIVISION = 4;
 Status status;
 void setup()
 {
@@ -24,8 +27,11 @@ void setup()
   setupPanR();
   setupPanL();
   setupMenu2();
+  
   setupSlider();
+  slider.scale(0);
   background(100);
+
   //hand = loadShape("hand.svg");
 }
 void draw()
@@ -117,7 +123,26 @@ void setupPanL()
 
 void setupSlider()
 {
-  
+  float xpos = 0;
+  float ypos = 0;
+  float point1 = xpos + (diameter/2)*sin(radians(0 + sliderWidth/2));
+  float point2 = xpos + (diameter/2)*sin(radians(0 - sliderWidth/2));
+  float point3 = xpos + (diameter/2 - thickness)*sin(radians(0 - sliderWidth/2));
+  float point4 = xpos + (diameter/2 - thickness)*sin(radians(0 + sliderWidth/2));
+  fill(200, 100, 10, 50);
+  slider = createShape();
+  slider.beginShape();
+  // Calculate the handle as a sine wave
+  for (float a = point1; a > point2; a -= step) {
+    slider.vertex(a, sqrt(sq(diameter/2)-sq(a-xpos)) + ypos);
+  }
+  for (float a = point3; a < point4; a += step) {
+    slider.vertex(a, sqrt(sq(diameter/2 - thickness)-sq(a-xpos)) + ypos);
+  }
+  slider.vertex(point1, sqrt(sq(diameter/2)-sq(point1-xpos)) + ypos);
+  slider.endShape();
+  menu2.addChild(slider);
+  // panL.rotate(radians(180));
 }
 
 void setupMenu2()
@@ -131,11 +156,22 @@ void setupMenu2()
 
 void update()
 {
-  overPanL = isInsidePanL(mouseX, mouseY, tolerance);
-  overPanR = isInsidePanR(mouseX, mouseY, tolerance);
+  if (progState != 2)
+  {
+    overPanL = isInsidePanL(mouseX, mouseY, tolerance);
+    overPanR = isInsidePanR(mouseX, mouseY, tolerance);
+  }
   checkState();
-  print("current State = ");
-  println(progState);
+  //print("current State = ");
+  //println(progState);
+  if (progState == 2)
+  {
+    panL.scale(0);
+    panR.scale(0);
+  } else
+  {
+    slider.scale(0);
+  }
 }
 
 boolean isInsidePanL(float x, float y, float rad)
@@ -176,32 +212,40 @@ void checkState()
 {
   if (progState == 0)
   {
-    if(overPanR | overPanL)
+    if (overPanR | overPanL)
     {
       progState = 1;
       startMs = millis();
     }
-  }
-  else if(progState == 1)
+  } else if (progState == 1)
   {
-    if(overPanL | overPanR)
+    if (overPanL | overPanR)
     {
-      if(millis() - startMs > timeIn)
+      if (millis() - startMs > timeIn)
       {
         progState = 2;
-        startPosX = mouseX;
-        startPosY = mouseY;
-
+        sliderStartPosX = mouseX;
+        sliderStartPosY = mouseY;
+        sliderPosY = sliderStartPosY;
+        sliderPosX = sliderStartPosX;
+        setupSlider();
       }
-    }
-    else
+    } else
     {
       progState = 0;
     }
-  }
-  else if(progState == 2)
+  } else if (progState == 2)
   {
-    
+    updateSliderPosition(mouseX, mouseY, mouseX, mouseY);
+    if (mousePressed)
+    {
+      setupPanL();
+      menu2.addChild(panL);
+      setupPanR();
+      menu2.addChild(panR);
+      menu2.rotate(-menu2Angle);
+      progState = 0;
+    }
   }
 }
 
@@ -210,3 +254,38 @@ boolean still(float x, float y, float rad)
   return true;
 }
 
+void updateSliderPosition(float x, float y, float x2, float y2)
+{
+  float meanX = (x + x2)/2;
+  float meanY = (y + y2)/2;
+  boolean lock = false;
+  float acceptance = 0.01;
+  float sliderToAngle;
+  if(meanY < menu2Y)
+    sliderToAngle = atan((meanX - menu2X) / (meanY - menu2Y));
+  else
+    sliderToAngle = -atan((meanX - menu2X) / (meanY - menu2Y));
+  float smoothness = 10;
+  
+  if ((sliderToAngle < sliderAngle ) && (sliderAngle > (-radians(theta - sliderWidth/2))) )
+  {
+    slider.rotate(-(sliderToAngle - sliderAngle)/smoothness);
+    sliderAngle += (sliderToAngle - sliderAngle)/smoothness;
+  } else if ((sliderToAngle > sliderAngle) && (sliderAngle < (radians(theta - sliderWidth/2))))
+  {
+    slider.rotate((-sliderToAngle + sliderAngle)/smoothness);
+    sliderAngle -= (-sliderToAngle + sliderAngle)/smoothness;
+  }
+  print(radians(theta-sliderWidth/2));
+  print(" ");
+  print(degrees(sliderAngle));
+  print(" ");
+  println(degrees(sliderToAngle));
+  sendPanMessage();
+}
+
+void sendPanMessage()
+{
+   int panning = (int)(degrees(sliderAngle)/(theta-sliderWidth/2)*PAN_DIVISION); 
+   println(panning);
+}
