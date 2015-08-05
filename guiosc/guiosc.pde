@@ -10,10 +10,7 @@ SecondApplet s;
 
 OscP5 oscP5;
 
-
-NetAddress myRemoteLocation; 
-
-
+NetAddress myRemoteLocation;
 
 int LIMPbackground = color(30, 30, 30);
 int volumeValue = 100;
@@ -37,16 +34,15 @@ Slider panning, seek;
 DropdownList equalizer;
 Button play, next, prev;
 
-
 void setup() {
   size(480, 360);
   PFrame f = new PFrame(640,480);
   frame.setTitle("LIMP");
   f.setTitle("Kinect");
   
-   oscP5 = new OscP5(this,12000);
+  oscP5 = new OscP5(this,12000);
   
-  myRemoteLocation = new NetAddress("127.0.0.1",12001);
+  myRemoteLocation = new NetAddress("127.0.0.1",12002);
   
   
   oscP5.plug(this,"test","/test");
@@ -154,24 +150,28 @@ void draw() {
   background(LIMPbackground);
   
  if(play.isPressed()){
-   if(playID){
+   if(playId){
    OscMessage myOscMessage = new OscMessage("/limp/play");
    oscP5.send(myOscMessage, myRemoteLocation);
-   playID = true;
+   playId = true;
    }
    else{
    OscMessage myOscMessage = new OscMessage("/limp/pause");
    oscP5.send(myOscMessage, myRemoteLocation);
-   playID = false;
+   playId = false;
    }
+   delay(100);
+ }
  if(next.isPressed()){
    OscMessage myOscMessage = new OscMessage("/limp/next");
    oscP5.send(myOscMessage, myRemoteLocation);
+   delay(100);
  } 
  
  if(prev.isPressed()){
    OscMessage myOscMessage = new OscMessage("/limp/prev");
    oscP5.send(myOscMessage, myRemoteLocation);
+   delay(100);
  }
  
  println(equalizer.getValue());
