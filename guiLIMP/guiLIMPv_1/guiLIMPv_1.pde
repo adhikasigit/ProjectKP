@@ -3,6 +3,7 @@ import controlP5.*;
 
 ControlP5 cp5;
 
+PFrame f = null;
 SecondApplet s;
 
 int LIMPbackground = color(30, 30, 30);
@@ -11,26 +12,33 @@ int panningValue = 25;
 int songLength = 100;
 boolean playId = false;
 
-PShape handle, panL, panR, eq, menu2, hand;
+int progState = 0;
+PShape handle, panL, panR, eq, menu2, hand, slider;
 float diameter = 200;
 float thickness = 30;
 float step = 0.1;
 float theta = 75;
 color cHandle = 0xCC006699;
 float menu2X = width/2, menu2Y= height/2;
-float panWidth = 30;
-float panTheta = theta - panWidth;
+float panWidth = 30, panPos = 45;
 boolean overPanL, overPanR;
+float tolerance = 10;
+int startMs, currentMs;
+float timeIn = 3000, timeOut = 3000;
+float handX, handY;
+float sliderPosX,sliderPosY;
+float startPosX,startPosY;
+//Status status;
 
 Knob volume;
 Slider panning, seek;
 DropdownList equalizer;
-Button play, next, prev;
+Button play, next, prev, kinect;
 
 
 void setup() {
   size(480, 360);
-  PFrame f = new PFrame(640,480);
+  if (f==null) f = new PFrame(640,480);
   frame.setTitle("LIMP");
   f.setTitle("Kinect");
   
@@ -108,28 +116,31 @@ void setup() {
                ;
      
   equalizer = cp5.addDropdownList("Equalizer")
-          .setPosition(420, 190)
+          .setPosition(400, 180)
           ;
   customize(equalizer); 
-  equalizer.setIndex(0);
+  //equalizer.setIndex(0);
     
-     
+  kinect = cp5.addButton("Kinect")
+               .setPosition(420, 150)
+               .setSize(40, 20)
+               .setColorBackground(color(50, 50, 50))
+               .setColorActive(color(90, 90, 90))
+               .setColorForeground(color(90, 90, 90))
+               .update()
+               .setSwitch(true)
+               ;
 }
 
 void customize(DropdownList eq) {
   // a convenience function to customize a DropdownList
   eq.setBackgroundColor(color(255));
   eq.setItemHeight(15);
-  eq.setWidth(40);
+  eq.setWidth(60);
   eq.setBarHeight(15);
-  eq.captionLabel().set("Equalizer");
-  eq.captionLabel().style().marginTop = 3;
-  eq.captionLabel().style().marginLeft = 3;
-  eq.valueLabel().style().marginTop = 3;
   eq.setColorBackground(color(50, 50, 50));
   eq.setColorActive(color(90, 90, 90));
   eq.setColorForeground(color(90, 90, 90));
-  
   eq.addItem("Pop", 0);eq.addItem("Rock", 1);eq.addItem("Jazz", 2);
 }
 
@@ -145,6 +156,8 @@ void draw() {
  if(prev.isPressed()){
    
  }
+ if(kinect.isOn()) f.show();
+ if(!kinect.isOn()) f.hide();
  
  println(equalizer.getValue());
  
@@ -156,33 +169,31 @@ public class PFrame extends JFrame {
     s = new SecondApplet();
     add(s);
     s.init();
-    show();
   }
 }
 public class SecondApplet extends PApplet {
   public void setup() {
     size(640, 480, P2D);
-    frameRate(30);
-    cp5 = new ControlP5(this);
-    
-    
     menu2X = width/2;
     menu2Y = height/2;
     setupHandle();  
     setupPanR();
     setupPanL();
     setupMenu2();
+    setupSlider();
     background(100);
     //hand = loadShape("hand.svg");
   }
 
   public void draw() {
-    if(overPanL)
-       background(0);
-      if(overPanR)
-       background(255);
-      shape(menu2, menu2X, menu2Y);
-      update();
+    if (overPanL)
+      background(0);
+    else if (overPanR)
+      background(255);
+    else 
+      background(122);
+    shape(menu2, menu2X, menu2Y);
+    update();
       //shape(handle, width/2, height/2);
       //shape(panL, width/2, height/2);
       //shape(panR, width/2, height/2);
@@ -213,10 +224,10 @@ public class SecondApplet extends PApplet {
   public void setupPanR() {
     float xpos = 0;
     float ypos = 0;
-    float point1 = xpos - (diameter/2)*sin(radians(theta));
-    float point2 = xpos - (diameter/2)*sin(radians(panTheta));
-    float point3 = xpos - (diameter/2 - thickness)*sin(radians(panTheta));
-    float point4 = xpos - (diameter/2 - thickness)*sin(radians(theta));
+    float point1 = xpos - (diameter/2)*sin(radians(panPos + panWidth/2));
+    float point2 = xpos - (diameter/2)*sin(radians(panPos - panWidth/2));
+    float point3 = xpos - (diameter/2 - thickness)*sin(radians(panPos - panWidth/2));
+    float point4 = xpos - (diameter/2 - thickness)*sin(radians(panPos + panWidth/2));
     fill(100, 200, 0, 50);
     panR = createShape();
     panR.beginShape();
@@ -235,10 +246,10 @@ public class SecondApplet extends PApplet {
   public void setupPanL() {
     float xpos = 0;
     float ypos = 0;
-    float point1 = xpos + (diameter/2)*sin(radians(theta));
-    float point2 = xpos + (diameter/2)*sin(radians(panTheta));
-    float point3 = xpos + (diameter/2 - thickness)*sin(radians(panTheta));
-    float point4 = xpos + (diameter/2 - thickness)*sin(radians(theta));
+    float point1 = xpos + (diameter/2)*sin(radians(panPos + panWidth/2));
+    float point2 = xpos + (diameter/2)*sin(radians(panPos - panWidth/2));
+    float point3 = xpos + (diameter/2 - thickness)*sin(radians(panPos - panWidth/2));
+    float point4 = xpos + (diameter/2 - thickness)*sin(radians(panPos + panWidth/2));
     fill(100, 200, 0, 50);
     panL = createShape();
     panL.beginShape();
@@ -254,6 +265,10 @@ public class SecondApplet extends PApplet {
     // panL.rotate(radians(180));
   }
   
+  public void setupSlider(){
+    
+  }
+  
   public void setupMenu2() {
     menu2 = createShape(GROUP);
     menu2.addChild(panL);
@@ -263,42 +278,80 @@ public class SecondApplet extends PApplet {
   }
   
   public void update() {
-    overPanL = isInsidePanL();
-    overPanR = isInsidePanR();
+    overPanL = isInsidePanL(mouseX, mouseY, tolerance);
+    overPanR = isInsidePanR(mouseX, mouseY, tolerance);
+    checkState();
+    print("current State = ");
+    println(progState);
   }
   
-  public boolean isInsidePanL() {
-    float phi = radians(theta - panWidth/2);
+  public boolean isInsidePanL(float x, float y, float rad) {
+    float phi = radians(panPos);
     float r = (diameter/2) - (thickness/2);
     float a = menu2X - r*sin(phi);
     float b = menu2Y - r*cos(phi);
-    float D = sqrt(sq(mouseX-a)+sq(mouseY-b+20));
-    if(D < (thickness/2))
+    if (sq(a-x)+sq(b-y) <= sq(rad+(thickness/2)))
       return true;
     return false;
+    /*
+    float D = (sq(x-a)+sq(y-b));
+     if (D < sq(thickness/2))
+     return true;
+     return false;
+     */
   }
   
-  public boolean isInsidePanR() {
-    float phi = radians(theta - panWidth/2);
+  public boolean isInsidePanR(float x, float y, float rad) {
+    float phi = radians(panPos);
     float r = (diameter/2) - (thickness/2);
     float a = menu2X + r*sin(phi);
     float b = menu2Y - r*cos(phi);
-    float D = sqrt(sq(mouseX-a)+sq(mouseY-b+20));
-    print(a);
-    print(" ");
-    print(b);
-    print(" ");
-    print(D);
-    print(" ");
-    print(thickness/2);
-    print(" ");
-    print(mouseX);
-    print(" ");
-    println(mouseY);
-    
-    if(D < (thickness/2))
+    if (sq(a-x)+sq(b-y) <= sq(rad+(thickness/2)))
       return true;
     return false;
+    /*
+    float D = (sq(x-a)+sq(y-b));
+     if (D < sq(thickness/2))
+     return true;
+     return false;
+     */
+  }
+  
+  public void checkState(){
+    if (progState == 0)
+    {
+      if(overPanR | overPanL)
+      {
+        progState = 1;
+        startMs = millis();
+      }
+    }
+    else if(progState == 1)
+    {
+      if(overPanL | overPanR)
+      {
+        if(millis() - startMs > timeIn)
+        {
+          progState = 2;
+          startPosX = mouseX;
+          startPosY = mouseY;
+  
+        }
+      }
+      else
+      {
+        progState = 0;
+      }
+    }
+    else if(progState == 2)
+    {
+      
+    }
+  }
+  
+  public boolean still(float x, float y, float rad)
+  {
+    return true;
   }
 }
 

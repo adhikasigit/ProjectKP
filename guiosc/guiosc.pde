@@ -124,7 +124,7 @@ void setup() {
           .setPosition(420, 190)
           ;
   customize(equalizer); 
-  equalizer.setIndex(0);
+  //equalizer.setIndex(0);
     
      
 }
@@ -135,10 +135,10 @@ void customize(DropdownList eq) {
   eq.setItemHeight(15);
   eq.setWidth(40);
   eq.setBarHeight(15);
-  eq.captionLabel().set("Equalizer");
-  eq.captionLabel().style().marginTop = 3;
-  eq.captionLabel().style().marginLeft = 3;
-  eq.valueLabel().style().marginTop = 3;
+  //eq.captionLabel().set("Equalizer");
+  //eq.captionLabel().style().marginTop = 3;
+  //eq.captionLabel().style().marginLeft = 3;
+  //eq.valueLabel().style().marginTop = 3;
   eq.setColorBackground(color(50, 50, 50));
   eq.setColorActive(color(90, 90, 90));
   eq.setColorForeground(color(90, 90, 90));
