@@ -38,10 +38,10 @@ void draw()
 
 void setupHandle()
 {
-  float point1 = (diameter/2)*sin(radians(theta));
+  float point1 = - (diameter/2)*sin(radians(theta));
   float point2 = (diameter/2)*sin(radians(theta));
   float point3 = (diameter/2 - thickness)*sin(radians(theta));
-  float point4 = (diameter/2 - thickness)*sin(radians(theta));
+  float point4 = - (diameter/2 - thickness)*sin(radians(theta));
   fill(100, 100, 0, 100);
   handle = createShape();
   handle.beginShape();
@@ -59,10 +59,10 @@ void setupHandle()
 
 void setupPanR()
 {
-  float point1 = (diameter/2)*sin(radians(panPos + panWidth/2));
-  float point2 = (diameter/2)*sin(radians(panPos - panWidth/2));
-  float point3 = (diameter/2 - thickness)*sin(radians(panPos - panWidth/2));
-  float point4 = (diameter/2 - thickness)*sin(radians(panPos + panWidth/2));
+  float point1 = -(diameter/2)*sin(radians(panPos + panWidth/2));
+  float point2 = -(diameter/2)*sin(radians(panPos - panWidth/2));
+  float point3 = -(diameter/2 - thickness)*sin(radians(panPos - panWidth/2));
+  float point4 = -(diameter/2 - thickness)*sin(radians(panPos + panWidth/2));
   fill(100, 200, 0, 50);
   panR = createShape();
   panR.beginShape();
@@ -104,12 +104,13 @@ void setupSlider()
   float point2 = (diameter/2)*sin(radians(0 - sliderWidth/2));
   float point3 = (diameter/2 - thickness)*sin(radians(0 - sliderWidth/2));
   float point4 = (diameter/2 - thickness)*sin(radians(0 + sliderWidth/2));
+  sliderAngle = 0;
   fill(200, 100, 10, 50);
   slider = createShape();
   slider.beginShape();
   // Calculate the handle as a sine wave
   for (float a = point1; a > point2; a -= step) {
-    slider.vertex(a, sqrt(sq(diameter/2)-sq(a-)));
+    slider.vertex(a, sqrt(sq(diameter/2)-sq(a)));
   }
   for (float a = point3; a < point4; a += step) {
     slider.vertex(a, sqrt(sq(diameter/2 - thickness)-sq(a)));
@@ -203,6 +204,7 @@ void checkState()
       menu2.addChild(panL);
       setupPanR();
       menu2.addChild(panR);
+
       menu2.rotate(-menu2Angle);
       progState = 0;
     }
