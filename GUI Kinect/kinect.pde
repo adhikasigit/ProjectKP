@@ -46,6 +46,9 @@ void setup()
   //enable generating RGB Image
   context.enableRGB();
 
+  context.enableHand();
+  context.startGesture(SimpleOpenNI.GESTURE_WAVE);
+
   background(200,0,0);
 
   stroke(0,0,255);
@@ -180,22 +183,55 @@ void onVisibleUser(SimpleOpenNI curContext, int userId)
 
 }
 
-
-
-
-
-/*
-//Unimportant
-
-void keyPressed()
+void onNewHand(SimpleOpenNI curContext,int handId,PVector pos)
 {
-  switch(key)
-  {
-  case ' ':
-    context.setMirror(!context.mirror());
-    break;
-  }
+  println("onNewHand - handId: " + handId + ", pos: " + pos);
+ 
+  ArrayList<PVector> vecList = new ArrayList<PVector>();
+  vecList.add(pos);
+  
+  handPathList.put(handId,vecList);
 }
 
-*/ 
+void onTrackedHand(SimpleOpenNI curContext,int handId,PVector pos)
+{
+  //println("onTrackedHand - handId: " + handId + ", pos: " + pos );
+  
+  ArrayList<PVector> vecList = handPathList.get(handId);
+  if(vecList != null)
+  {
+    vecList.add(0,pos);
+    if(vecList.size() >= handVecListSize)
+      // remove the last point 
+      vecList.remove(vecList.size()-1); 
+  }  
+}
 
+void onLostHand(SimpleOpenNI curContext,int handId)
+{
+  println("onLostHand - handId: " + handId);
+  handPathList.remove(handId);
+}
+
+// -----------------------------------------------------------------
+// gesture events
+
+void onCompletedGesture(SimpleOpenNI curContext,int gestureType, PVector pos)
+{
+  if(gestureType == 0){
+    println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
+    int handId = context.startTrackingHand(pos);
+  }else if (gestureType == 1){
+    //toggle play and pause
+    if(play == 1){
+      //execute pause command
+      executeOSCCommand();
+      playPauseTimer = -1;
+    }else if(play == 0){
+      //execute play command
+      executeOSCCommand();
+      playPauseTimer = -1;
+    }1
+  }
+  
+}
