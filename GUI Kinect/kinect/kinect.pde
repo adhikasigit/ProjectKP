@@ -25,23 +25,6 @@ color[]       userClr = new color[]{ color(255,0,0),
 PVector com = new PVector();                                   
 PVector com2d = new PVector();                                   
 
-
-
-PVector rightHandPos = new PVector();
-PVector rightHandPos2d = new PVector();
-PVector leftHandPos = new PVector();
-PVector leftHandPos2d = new PVector();
-PVector torsoPos = new PVector();
-PVector torsoPos2d = new PVector();
-
-int showPlayPauseAnimation;
-int state;
-int playPauseTimer;
-
-PImage playIcon;
-PImage pauseIcon;
-
-
 void setup()
 {
   size(640,480);
@@ -66,20 +49,15 @@ void setup()
   context.enableHand();
   context.startGesture(SimpleOpenNI.GESTURE_WAVE);
 
+  background(200,0,0);
 
   stroke(0,0,255);
   strokeWeight(10);
-  smooth();
-
-  playIcon = loadImage("play.png");
-  pauseIcon = loadImage("pause.png");
-
+  smooth();  
 }
 
 void draw()
 {
-  clear();
-  background(255,255,255);
   // update the cam
   context.update();
   
@@ -96,6 +74,12 @@ void draw()
   }else if(userList.length == 1){
     text("Raise your hand to show the menu, dude!", 10, 30);
     //check hand position
+    PVector rightHandPos = new PVector();
+    PVector rightHandPos2d = new PVector();
+    PVector leftHandPos = new PVector();
+    PVector leftHandPos2d = new PVector();
+    PVector torsoPos = new PVector();
+    PVector torsoPos2d = new PVector();
 
     context.getJointPositionSkeleton(userList[0], SimpleOpenNI.SKEL_LEFT_HAND, leftHandPos);
     context.getJointPositionSkeleton(userList[0], SimpleOpenNI.SKEL_RIGHT_HAND, leftHandPos);
@@ -105,11 +89,6 @@ void draw()
     context.convertRealWorldToProjective(leftHandPos, leftHandPos2d);
     context.convertRealWorldToProjective(torsoPos, torsoPos2d);
 
-    //play and pause action
-    if(showPlayPauseAnimation == 1){
-      drawPlayPause(torsoPos2d);
-    }
-
     if(leftHandPos2d.y >= torsoPos2d.y && rightHandPos2d.y >= torsoPos2d.y){
       //two hands menu
       DrawTwoHandsMenu();
@@ -117,8 +96,6 @@ void draw()
       if(state != TwoHandsHoveringOnMenu()){
         state = TwoHandsHoveringOnMenu();
       }
-
-
     }else if(leftHandPos2d.y >= torsoPos2d.y ^ rightHandPos2d.y >= torsoPos2d.y){
       //single hand menu
       DrawSingleHandsMenu();
@@ -248,35 +225,13 @@ void onCompletedGesture(SimpleOpenNI curContext,int gestureType, PVector pos)
     //toggle play and pause
     if(play == 1){
       //execute pause command
-      showPlayPauseAnimation = 1;
       executeOSCCommand();
-      playPauseTimer = millis();
+      playPauseTimer = -1;
     }else if(play == 0){
       //execute play command
-      showPlayPauseAnimation  = 1;
       executeOSCCommand();
-      playPauseTimer = millis();
-    }
+      playPauseTimer = -1;
+    }1
   }
-}
-
-
-void drawPlayPause(PVector torso2d){
-  time = millis() - playPauseTimer;
-  if(time < 500){
-      transparency = round(time * 255 / 500);
-      println(transparency);
-  }else if(time >= 500 && time < 1000){
-      transparency = round(255 * (2 - (time/500)));
-      println(transparency);
-  }else{
-    timeNol = millis();
-    println("timenol");    
-  }
-  tint(255, transparency);
-  if(play == 1){
-    image(pauseIcon, torso2d.x, torso2d.y);
-  }else (play == 0){
-    image(playIcon, torso2d.x, torso2d.y);
-  }
+  
 }
