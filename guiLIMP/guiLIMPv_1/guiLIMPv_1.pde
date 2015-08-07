@@ -13,6 +13,8 @@ OscP5 oscP5;
 NetAddress port1;
 NetAddress port2;
 NetAddress port3;
+NetAddress port4;
+
 
 int LIMPbackground = color(30, 30, 30);
 float volumeValue = 0.500;
@@ -58,6 +60,8 @@ void setup() {
   
   port1 = new NetAddress("127.0.0.1",12002);
   port2 = new NetAddress("127.0.0.1",12003);
+  port3 = new NetAddress("127.0.0.1",12004);
+  port4 = new NetAddress("127.0.0.1",12005);
   
   
   oscP5.plug(this,"test","/test");
@@ -184,8 +188,11 @@ void draw() {
     if(!start){
         start = true;
         playId = true;
+        //OscMessage myOscMessage4 = new OscMessage("/playlist");
+        //oscP5.send(myOscMessage4, port4);
         OscMessage myOscMessage3 = new OscMessage("/volume");
-        myOscMessage3.add((float)VolumeValue);
+        myOscMessage3.add((float)0.500);
+        oscP5.send(myOscMessage3, port3);
         OscMessage myOscMessage2 = new OscMessage("/songid");
         myOscMessage2.add((int)songId);
         oscP5.send(myOscMessage2, port2);
