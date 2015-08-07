@@ -1,6 +1,6 @@
-#N canvas 0 0 1366 686 10;
+#N canvas 0 0 1366 670 10;
 #X declare -lib mrpeach;
-#X obj 440 45 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 440 45 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X msg 436 115 \; pd dsp \$1;
 #X msg 632 94 start;
@@ -18,9 +18,9 @@
 #X obj 666 345 *~ 0.1;
 #X obj 817 349 *~ 0.1;
 #X obj 607 191 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 4700 1;
+-1 -1 6600 1;
 #X obj 905 198 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 4700 1;
+-1 -1 6600 1;
 #X text 927 253 Right channel volume;
 #X text 624 248 Left channel volume;
 #X msg 905 151 seek \$1;
@@ -38,29 +38,24 @@
 #X obj 451 463 udpreceive 12002;
 #X obj 452 501 unpackOSC;
 #X obj 451 541 routeOSC /limp;
-#X obj 440 603 send pause;
-#X obj 571 600 send next;
-#X obj 641 599 send prev;
-#X obj 535 -11 receive pause;
-#X obj 452 571 routeOSC /pause /play /next /prev;
-#X obj 501 600 send play;
-#X obj 617 5 receive play;
-#N canvas 724 160 450 300 pause 0;
-#X obj 110 146 switch~;
-#X msg 91 63 0;
-#X msg 145 67 1;
-#X obj 78 16 inlet;
-#X obj 153 17 inlet;
-#X connect 1 0 0 0;
-#X connect 2 0 0 0;
-#X connect 3 0 1 0;
-#X connect 4 0 2 0;
-#X restore 563 41 pd pause;
-#X obj 399 602 print;
+#X obj 368 -17 receive pause;
+#X obj 263 -2 receive play;
 #X obj 742 -58 bb_filebrowser;
 #X floatatom 875 121 5 0 0 0 - - -;
 #X floatatom 738 -92 5 0 0 0 - - -;
 #X msg 732 126 open \$1;
+#X obj 274 64 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 865 -258 udpreceive 12003;
+#X obj 865 -218 unpackOSC;
+#X obj 859 -163 routeOSC /songid;
+#X obj 388 606 send start;
+#X obj 481 604 send pause;
+#X obj 555 604 send play;
+#X obj 16 -42 s;
+#X obj 1001 570 send prev;
+#X obj 452 571 routeOSC /start /pause /play;
+#X obj 604 24 receive start;
 #X connect 0 0 1 0;
 #X connect 2 0 4 0;
 #X connect 3 0 4 0;
@@ -91,15 +86,17 @@
 #X connect 28 0 22 0;
 #X connect 30 0 31 0;
 #X connect 31 0 32 0;
-#X connect 32 0 37 0;
-#X connect 36 0 40 0;
-#X connect 37 0 33 0;
-#X connect 37 0 41 0;
-#X connect 37 1 38 0;
-#X connect 37 2 34 0;
-#X connect 37 3 35 0;
-#X connect 39 0 40 1;
-#X connect 42 0 45 0;
-#X connect 42 1 43 0;
-#X connect 44 0 42 0;
-#X connect 45 0 4 0;
+#X connect 32 0 48 0;
+#X connect 33 0 0 0;
+#X connect 34 0 0 0;
+#X connect 35 0 38 0;
+#X connect 35 1 36 0;
+#X connect 37 0 35 0;
+#X connect 38 0 4 0;
+#X connect 40 0 41 0;
+#X connect 41 0 42 0;
+#X connect 42 0 37 0;
+#X connect 48 0 43 0;
+#X connect 48 1 44 0;
+#X connect 48 2 45 0;
+#X connect 49 0 2 0;

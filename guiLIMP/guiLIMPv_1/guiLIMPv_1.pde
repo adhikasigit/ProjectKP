@@ -10,14 +10,17 @@ SecondApplet s;
 
 OscP5 oscP5;
 
-NetAddress myRemoteLocation;
+NetAddress port1;
+NetAddress port2;
+NetAddress port3;
 
 int LIMPbackground = color(30, 30, 30);
-int volumeValue = 100;
+float volumeValue = 0.500;
 int panningValue = 25;
 int songLength = 100;
 int songId = 0;
 boolean playId = false;
+boolean start = false;
 String namaFile = "lorem ipsum";
 
 int progState = 0;
@@ -53,7 +56,8 @@ void setup() {
 
   oscP5 = new OscP5(this,12000);
   
-  myRemoteLocation = new NetAddress("127.0.0.1",12002);
+  port1 = new NetAddress("127.0.0.1",12002);
+  port2 = new NetAddress("127.0.0.1",12003);
   
   
   oscP5.plug(this,"test","/test");
@@ -177,29 +181,50 @@ void draw() {
   background(LIMPbackground);
 
   if (play.isPressed()) {
-    if (playId) {
-      OscMessage myOscMessage = new OscMessage("/limp/play");
-      oscP5.send(myOscMessage, myRemoteLocation);
-      playId = true;
-    } else {
-      OscMessage myOscMessage = new OscMessage("/limp/pause");
-      oscP5.send(myOscMessage, myRemoteLocation);
-      playId = false;
+    if(!start){
+        start = true;
+        playId = true;
+        OscMessage myOscMessage3 = new OscMessage("/volume");
+        myOscMessage3.add((float)VolumeValue);
+        OscMessage myOscMessage2 = new OscMessage("/songid");
+        myOscMessage2.add((int)songId);
+        oscP5.send(myOscMessage2, port2);
+        OscMessage myOscMessage1 = new OscMessage("/limp/play");
+        oscP5.send(myOscMessage1, port1);
+        OscMessage myOscMessage = new OscMessage("/limp/start");
+        oscP5.send(myOscMessage, port1);
     }
-    delay(100);
+    else{
+      if (playId) {
+        OscMessage myOscMessage = new OscMessage("/limp/play");
+        oscP5.send(myOscMessage, port1);
+        playId = true;
+      } else {
+        OscMessage myOscMessage = new OscMessage("/limp/pause");
+        oscP5.send(myOscMessage, port1);
+        playId = false;
+      }
+    }
+    delay(500);
   }
   if (next.isPressed()) {
-    OscMessage myOscMessage = new OscMessage("/limp/next");
-    oscP5.send(myOscMessage, myRemoteLocation);
     songId+=1;
-    delay(100);
+    OscMessage myOscMessage = new OscMessage("/songid");
+    myOscMessage.add((int)songId);
+    oscP5.send(myOscMessage,port2);
+    OscMessage myOscMessage1 = new OscMessage("/limp/start");
+    oscP5.send(myOscMessage1, port1);
+    delay(500);
   } 
 
   if (prev.isPressed()) {
-    OscMessage myOscMessage = new OscMessage("/limp/prev");
-    oscP5.send(myOscMessage, myRemoteLocation);
     songId-=1;
-    delay(100);
+    OscMessage myOscMessage = new OscMessage("/songid");
+    myOscMessage.add((int)songId);
+    oscP5.send(myOscMessage, port2);
+     OscMessage myOscMessage1 = new OscMessage("/limp/start");
+    oscP5.send(myOscMessage1, port1);
+    delay(500);
   }
 
   if (kinect.isOn()) f.show();
