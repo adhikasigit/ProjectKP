@@ -95,7 +95,7 @@ void draw()
     {
       stroke(userClr[ (userList[i] - 1) % userClr.length ] );
       drawSkeleton(userList[i]);
-      println("ngetrack "+ userList[i]);
+      //println("ngetrack "+ userList[i]);
     }      
   }
   
@@ -107,7 +107,7 @@ void draw()
     //check hand position
 
     context.getJointPositionSkeleton(userList[0], SimpleOpenNI.SKEL_LEFT_HAND, leftHandPos);
-    context.getJointPositionSkeleton(userList[0], SimpleOpenNI.SKEL_RIGHT_HAND, leftHandPos);
+    context.getJointPositionSkeleton(userList[0], SimpleOpenNI.SKEL_RIGHT_HAND, rightHandPos);
     context.getJointPositionSkeleton(userList[0], SimpleOpenNI.SKEL_TORSO, torsoPos);
 
     context.convertRealWorldToProjective(rightHandPos, rightHandPos2d);
@@ -119,26 +119,20 @@ void draw()
       drawPlayPause(torsoPos2d);
     }
     
-    
-    
-    println("left : "+ leftHandPos);
-    println("right : "+ rightHandPos);
-    println("torso : " + torsoPos);
-    
     if(leftHandPos2d.y <= torsoPos2d.y && rightHandPos2d.y <= torsoPos2d.y){
       //two hands menu
       println("Show Menu 2");
-      updateMenu2();
+      updateMenu2(torsoPos2d.x,torsoPos2d.y - 150);
 
-    }else if(leftHandPos2d.y <= torsoPos2d.y ^ rightHandPos2d.y <= torsoPos2d.y){
+    }else if(leftHandPos2d.y <= torsoPos2d.y || rightHandPos2d.y <= torsoPos2d.y){
       //single hand menu
       if(leftHandPos2d.y <= torsoPos2d.y){
         tangan = KIRI;      
       }else if(rightHandPos2d.y <= torsoPos2d.y){
         tangan = KANAN;
       }
-      updateMenu1();
-      println("Show Menu 1");
+      updateMenu1(torsoPos2d.x, torsoPos2d.y - 150);
+      println("Show Menu 1: " + tangan);
     }else{
       //state = 0;
     }
@@ -150,7 +144,7 @@ void draw()
 
   
   
-  println("Jumlah User: " + userList.length);
+  //println("Jumlah User: " + userList.length);
 
 }
 

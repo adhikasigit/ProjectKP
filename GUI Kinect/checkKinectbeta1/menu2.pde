@@ -138,11 +138,15 @@ void setupMenu1(float x, float y, float s)
   setupSlider1();
   slider1.scale(0);
   menu1.scale(s);
+  leftHandPositionTemp = torsoPos2d;
+  rightHandPositionTemp = torsoPos2d;
 }
 
-void updateMenu1()
+void updateMenu1(float x, float y)
 {
-  shape(menu1, torsoPos2d.x, torsoPos2d.y);
+  shape(menu1, x, y);
+  menu1X = x;
+  menu1Y = y;
   println(progState);
   if (progState != 4)
   {
@@ -227,6 +231,7 @@ void checkStateMenu1()
     {
       if (millis() - startMs > timeIn)
       {
+        println("NEXT");
         progState = 0;
         sendNextMessage();
       }
@@ -242,6 +247,7 @@ void checkStateMenu1()
     {
       if (millis() - startMs > timeIn)
       {
+        println("PREV");
         progState = 0;
         sendPrevMessage();
       }
@@ -278,13 +284,13 @@ void checkStateMenu1()
       updateSlider1Position(leftHandPos2d.x, leftHandPos2d.y, leftHandPos2d.x, leftHandPos2d.y);  
     }else if(tangan == KANAN){
       updateSlider1Position(rightHandPos2d.x, rightHandPos2d.y, rightHandPos2d.x, rightHandPos2d.y);
-    }
+    }e
     
     if(tangan == KIRI){
       if((leftHandPositionTemp.x - leftHandPos2d.x >= tolerance) && (leftHandPositionTemp.y - leftHandPos2d.y >= tolerance)){
         timer3 = millis();
       }else{
-        if(millis() - timer3 >= timeIn){
+        if(millis() - timer3 >= timeIn + 1000){
           setupPrev();
           menu1.addChild(prev);
           setupNext();
@@ -301,7 +307,7 @@ void checkStateMenu1()
       if((rightHandPositionTemp.x - rightHandPos2d.x >= tolerance) && (rightHandPositionTemp.y - rightHandPos2d.y >= tolerance)){
         timer3 = millis();
       }else{
-        if(millis() - timer3 >= timeIn){
+        if(millis() - timer3 >= timeIn+1000){
           setupPrev();
           menu1.addChild(prev);
           setupNext();

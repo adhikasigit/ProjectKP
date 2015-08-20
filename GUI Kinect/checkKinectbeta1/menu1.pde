@@ -1,6 +1,6 @@
 static final float step = 0.1;
 static final float tolerance = 10;
-static final float timeIn = 2000, timeOut = 2000;
+static final float timeIn = 1000, timeOut = 1000;
 static final int PAN_DIVISION = 4, VOLUME_DIVISION = 10;
 
 PShape handle2, handle1, panL, panR, menu2, hand, slider2, slider1, menu1, prev, next, vol;
@@ -121,14 +121,15 @@ void setupMenu2(float x, float y, float s)
   menu2.scale(s);
 }
 
-void updateMenu2()
+void updateMenu2(float x, float y)
 {
-  shape(menu2, torsoPos2d.x, torsoPos2d.y);
-
+  shape(menu2, x, y);
+  menu2X = x;
+  menu2Y = y;
   if (progState != 2)
   {
-    overPanL = isInsidePanL(leftHandPos2d.x, leftHandPos2d.y, tolerance);
-    overPanR = isInsidePanR(rightHandPos2d.x, rightHandPos2d.y, tolerance);
+    overPanL = isInsidePanL(leftHandPos.x, leftHandPos.y, tolerance);
+    overPanR = isInsidePanR(rightHandPos.x, rightHandPos.y, tolerance);
   }
   checkStateMenu2();
   if (progState == 2)
