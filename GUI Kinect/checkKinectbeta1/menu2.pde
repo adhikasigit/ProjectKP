@@ -11,11 +11,12 @@ float slider1PosX, slider1PosY;
 float slider1StartPosX, slider1StartPosY;
 float slider1Angle, slider1Width = 30;
 
-int timer3;
+
+int timer3, timerHold;
 
 
-PVector leftHandPositionTemp;
-PVector rightHandPositionTemp;
+PVector leftHandPositionTemp = new PVector();
+PVector rightHandPositionTemp = new PVector();
 
 void setupHandleMenu1()
 {
@@ -123,6 +124,7 @@ void setupSlider1()
 
 void setupMenu1(float x, float y, float s)
 {
+  strokeWeight(0);
   setupHandleMenu1();
   setupNext();
   setupPrev();
@@ -144,22 +146,22 @@ void setupMenu1(float x, float y, float s)
 
 void updateMenu1(float x, float y)
 {
+  strokeWeight(0);
   shape(menu1, x, y);
   menu1X = x;
   menu1Y = y;
-  println(progState);
+  println("Program State : " + progState);
   if (progState != 4)
   {
-    if(tangan == KIRI){
+    if (tangan == KIRI) {
       overVolume = isInsideVol(leftHandPos2d.x, leftHandPos2d.y, tolerance);
       overPrev = isInsidePrev (leftHandPos2d.x, leftHandPos2d.y, tolerance);
       overNext = isInsideNext (leftHandPos2d.x, leftHandPos2d.y, tolerance);
-    }else if(tangan == KANAN){
+    } else if (tangan == KANAN) {
       overVolume = isInsideVol(rightHandPos2d.x, rightHandPos2d.y, tolerance);
       overPrev = isInsidePrev (rightHandPos2d.x, rightHandPos2d.y, tolerance);
       overNext = isInsideNext (rightHandPos2d.x, rightHandPos2d.y, tolerance);
     }
-    
   }
   checkStateMenu1();
   if (progState == 4)
@@ -214,13 +216,11 @@ void checkStateMenu1()
     {
       progState = 1;
       startMs = millis();
-    }
-    else if(overPrev)
+    } else if (overPrev)
     {
       progState = 2;
       startMs = millis();
-    }
-    else if(overVolume)
+    } else if (overVolume)
     {
       progState = 3;
       startMs = millis();
@@ -235,7 +235,7 @@ void checkStateMenu1()
         progState = 0;
         sendNextMessage();
       }
-     next.setFill(color(100, 200, 0, 255));
+      next.setFill(color(100, 200, 0, 255));
     } else
     {
       next.setFill(color(100, 200, 0, 122));
@@ -251,7 +251,7 @@ void checkStateMenu1()
         progState = 0;
         sendPrevMessage();
       }
-     prev.setFill(color(100, 200, 0, 255));
+      prev.setFill(color(100, 200, 0, 255));
     } else
     {
       prev.setFill(color(100, 200, 0, 122));
@@ -264,13 +264,24 @@ void checkStateMenu1()
       if (millis() - startMs > timeIn)
       {
         progState = 4;
-        slider1StartPosX = mouseX;
-        slider1StartPosY = mouseY;
+        if (tangan == KIRI)
+        {
+          slider1StartPosX = leftHandPos2d.x;
+          slider1StartPosY = leftHandPos2d.y;
+        } else if (tangan == KANAN)
+        {
+          slider1StartPosX = rightHandPos2d.x;
+          slider1StartPosY = rightHandPos2d.y;
+        }
         slider1PosY = slider1StartPosY;
         slider1PosX = slider1StartPosX;
         setupSlider1();
+        leftHandPositionTemp = new PVector(leftHandPos2d.x,leftHandPos2d.y);
+        rightHandPositionTemp = new PVector(rightHandPos2d.x,rightHandPos2d.y);
+        timer3 = millis();
+        timerHold = timer3;
       }
-     vol.setFill(color(100, 200, 0, 255));
+      vol.setFill(color(100, 200, 0, 255));
     } else
     {
       vol.setFill(color(100, 200, 0, 122));
@@ -278,51 +289,51 @@ void checkStateMenu1()
     }
   } else if (progState == 4)
   {
-
-    if(tangan == KIRI)
+    println("Delta Position Ref : " + rightHandPositionTemp+  " R : " +  rightHandPos2d);
+    if (tangan == KIRI)
     {
-      updateSlider1Position(leftHandPos2d.x, leftHandPos2d.y, leftHandPos2d.x, leftHandPos2d.y);  
-    }else if(tangan == KANAN){
+      updateSlider1Position(leftHandPos2d.x, leftHandPos2d.y, leftHandPos2d.x, leftHandPos2d.y);
+    } else if (tangan == KANAN) {
       updateSlider1Position(rightHandPos2d.x, rightHandPos2d.y, rightHandPos2d.x, rightHandPos2d.y);
     }
-    
-    if(tangan == KIRI){
-      if((leftHandPositionTemp.x - leftHandPos2d.x >= tolerance) && (leftHandPositionTemp.y - leftHandPos2d.y >= tolerance)){
-        timer3 = millis();
-      }else{
-        if(millis() - timer3 >= timeIn + 1000){
-          setupPrev();
-          menu1.addChild(prev);
-          setupNext();
-          menu1.addChild(next);
-          setupVol();
-          menu1.addChild(vol);
-          menu1.rotate(-menu1Angle);
-          progState = 0;
+    if (millis()-timerHold > 100) {
+      timerHold = millis();
+       
+      if (tangan == KIRI) {
+        if ((abs(leftHandPositionTemp.x - leftHandPos2d.x) >= HOLD_TOLERANCE) && (abs(leftHandPositionTemp.y - leftHandPos2d.y) >= HOLD_TOLERANCE)) {
+          timer3 = millis();
+          leftHandPositionTemp = new PVector(leftHandPos2d.x,leftHandPos2d.y);
+        } else {
+          if (millis() - timer3 >= timeIn + 1000) {
+            setupPrev();
+            menu1.addChild(prev);
+            setupNext();
+            menu1.addChild(next);
+            setupVol();
+            menu1.addChild(vol);
+            menu1.rotate(-menu1Angle);
+            progState = 0;
+          }
         }
-      }
+      } else if (tangan == KANAN) {
 
-    }else if(tangan == KANAN){
-      
-      if((rightHandPositionTemp.x - rightHandPos2d.x >= tolerance) && (rightHandPositionTemp.y - rightHandPos2d.y >= tolerance)){
-        timer3 = millis();
-      }else{
-        if(millis() - timer3 >= timeIn+1000){
-          setupPrev();
-          menu1.addChild(prev);
-          setupNext();
-          menu1.addChild(next);
-          setupVol();
-          menu1.addChild(vol);
-          menu1.rotate(-menu1Angle);
-          progState = 0;
+        if ((abs(rightHandPositionTemp.x - rightHandPos2d.x) >= HOLD_TOLERANCE) && (abs(rightHandPositionTemp.y - rightHandPos2d.y) >= HOLD_TOLERANCE)) {
+          timer3 = millis();
+          rightHandPositionTemp = new PVector(rightHandPos2d.x,rightHandPos2d.y);
+        } else {
+          if (millis() - timer3 >= timeIn + 1000) {
+            setupPrev();
+            menu1.addChild(prev);
+            setupNext();
+            menu1.addChild(next);
+            setupVol();
+            menu1.addChild(vol);
+            menu1.rotate(-menu1Angle);
+            progState = 0;
+          }
         }
       }
     }
-
-    leftHandPositionTemp = leftHandPos2d;
-    rightHandPositionTemp = rightHandPos2d;
-
   }
 }
 
@@ -333,12 +344,12 @@ void updateSlider1Position(float x, float y, float x2, float y2)
   boolean lock = false;
   float acceptance = 0.01;
   float slider1ToAngle;
-  if(meanY < menu1Y)
+  if (meanY < menu1Y)
     slider1ToAngle = atan((meanX - menu1X) / (meanY - menu1Y));
   else
     slider1ToAngle = -atan((meanX - menu1X) / (meanY - menu1Y));
-  float smoothness = 10;
-  
+  float smoothness = 1;
+
   // harus ditambah constraint supaya slider ga lebih dari handle
   if ((slider1ToAngle < slider1Angle ) && (slider1Angle > (-radians(thetaMenu1 - slider1Width/2))) )
   {
@@ -379,3 +390,4 @@ void sendNextMessage()
   println("NEXT!");
   delay(100);
 }
+

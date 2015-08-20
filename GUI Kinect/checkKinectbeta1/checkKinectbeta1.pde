@@ -66,7 +66,6 @@ void setup()
   
   
   stroke(0,0,255);
-  strokeWeight(10);
   smooth();
 
   playIcon = loadImage("play.png");
@@ -88,7 +87,7 @@ void draw()
 
   // draw the skeleton if it's available
   int[] userList = context.getUsers();
-  
+  strokeWeight(2);
   for(int i=0;i<userList.length;i++)
   {
     if(context.isTrackingSkeleton(userList[i]))
@@ -121,8 +120,9 @@ void draw()
     
     if(leftHandPos2d.y <= torsoPos2d.y && rightHandPos2d.y <= torsoPos2d.y){
       //two hands menu
-      println("Show Menu 2");
+      //println("Show Menu 2");
       updateMenu2(torsoPos2d.x,torsoPos2d.y - 150);
+      ;
 
     }else if(leftHandPos2d.y <= torsoPos2d.y || rightHandPos2d.y <= torsoPos2d.y){
       //single hand menu
@@ -132,9 +132,10 @@ void draw()
         tangan = KANAN;
       }
       updateMenu1(torsoPos2d.x, torsoPos2d.y - 150);
-      println("Show Menu 1: " + tangan);
+      
+      //println("Show Menu 1: " + tangan);
     }else{
-      //state = 0;
+      progState = 0;
     }
   
   
@@ -150,15 +151,15 @@ void draw()
 
 void onNewUser(SimpleOpenNI curContext, int userId)
 {
-  println("onNewUser - userId: " + userId);
-  println("\tstart tracking skeleton");
+  //println("onNewUser - userId: " + userId);
+  //println("\tstart tracking skeleton");
   
   curContext.startTrackingSkeleton(userId);
 }
 
 void onLostUser(SimpleOpenNI curContext, int userId)
 {
-  println("onLostUser - userId: " + userId);
+  //println("onLostUser - userId: " + userId);
 }
 
 void onVisibleUser(SimpleOpenNI curContext, int userId)
@@ -170,7 +171,7 @@ void onVisibleUser(SimpleOpenNI curContext, int userId)
 
 void onNewHand(SimpleOpenNI curContext,int handId,PVector pos)
 {
-  println("onNewHand - handId: " + handId + ", pos: " + pos);
+  //println("onNewHand - handId: " + handId + ", pos: " + pos);
  
   ArrayList<PVector> vecList = new ArrayList<PVector>();
   vecList.add(pos);
@@ -194,7 +195,7 @@ void onTrackedHand(SimpleOpenNI curContext,int handId,PVector pos)
 
 void onLostHand(SimpleOpenNI curContext,int handId)
 {
-  println("onLostHand - handId: " + handId);
+  //println("onLostHand - handId: " + handId);
   handPathList.remove(handId);
 }
 
@@ -204,7 +205,7 @@ void onLostHand(SimpleOpenNI curContext,int handId)
 void onCompletedGesture(SimpleOpenNI curContext,int gestureType, PVector pos)
 {
   if(gestureType == 0){
-    println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
+    //println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
     int handId = context.startTrackingHand(pos);
   }else if (gestureType == 1){
     //toggle play and pause
@@ -212,14 +213,14 @@ void onCompletedGesture(SimpleOpenNI curContext,int gestureType, PVector pos)
       //execute pause command
       showPlayPauseAnimation = 1;
       play = 0;
-      println("Execute Command Pause");
+      //println("Execute Command Pause");
       //executeOSCCommand();
       playPauseTimer = millis();
     }else if(play == 0){
       //execute play command
       showPlayPauseAnimation  = 1;
       play = 1;
-      println("Execute Command Play");
+      //println("Execute Command Play");
       //executeOSCCommand();
       playPauseTimer = millis();
     }
@@ -231,10 +232,10 @@ void drawPlayPause(PVector torso2d){
   time = millis() - playPauseTimer;
   if(time < 500){
       transparency = round(time * 255 / 500);
-      println(transparency);
+      //println(transparency);
   }else if(time >= 500 && time < 1000){
       transparency = round(255 * (2 - (time/500)));
-      println(transparency);
+      //println(transparency);
   }else{
     playPauseTimer = millis();
     showPlayPauseAnimation = 0;
