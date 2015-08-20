@@ -284,7 +284,7 @@ void checkStateMenu1()
       updateSlider1Position(leftHandPos2d.x, leftHandPos2d.y, leftHandPos2d.x, leftHandPos2d.y);  
     }else if(tangan == KANAN){
       updateSlider1Position(rightHandPos2d.x, rightHandPos2d.y, rightHandPos2d.x, rightHandPos2d.y);
-    }e
+    }
     
     if(tangan == KIRI){
       if((leftHandPositionTemp.x - leftHandPos2d.x >= tolerance) && (leftHandPositionTemp.y - leftHandPos2d.y >= tolerance)){
