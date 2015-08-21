@@ -124,7 +124,7 @@ void draw()
     
     if(leftHandPos2d.y <= torsoPos2d.y && rightHandPos2d.y <= torsoPos2d.y){
       //two hands menu
-      println("Show Menu 2");
+      //println("Show Menu 2");
       updateMenu2(torsoPos2d.x,torsoPos2d.y - 150, torsoPos.z);
 
     }else if(leftHandPos2d.y <= torsoPos2d.y || rightHandPos2d.y <= torsoPos2d.y){
@@ -135,7 +135,7 @@ void draw()
         tangan = KANAN;
       }
       updateMenu1(torsoPos2d.x, torsoPos2d.y - 150, torsoPos.z);
-      println("Show Menu 1: " + tangan);
+      // println("Show Menu 1: " + tangan);
     }else{
       //state = 0;
     }
@@ -236,10 +236,10 @@ void drawPlayPause(PVector torso){
   time = millis() - playPauseTimer;
   if(time < 500){
       transparency = round(time * 255 / 500);
-      println(transparency);
+      //println(transparency);
   }else if(time >= 500 && time < 1000){
       transparency = round(255 * (2 - (time/500)));
-      println(transparency);
+     //println(transparency);
   }else{
     playPauseTimer = millis();
     showPlayPauseAnimation = 0;
@@ -262,10 +262,10 @@ void drawPlayPause(PVector torso){
 void drawSkeleton(int userId)
 {
   // to get the 3d joint data
-  
+  /*
   PVector jointPos = new PVector();
   context.getJointPositionSkeleton(userId,SimpleOpenNI.SKEL_TORSO,jointPos);
-  println(jointPos);
+  println(jointPos);*/
   
   
   context.drawLimb(userId, SimpleOpenNI.SKEL_HEAD, SimpleOpenNI.SKEL_NECK);
