@@ -300,7 +300,7 @@ void checkStateMenu1()
       timerHold = millis();
        
       if (tangan == KIRI) {
-        if ((abs(leftHandPositionTemp.x - leftHandPos2d.x) >= HOLD_TOLERANCE) && (abs(leftHandPositionTemp.y - leftHandPos2d.y) >= HOLD_TOLERANCE)) {
+        if ((abs(leftHandPositionTemp.x - leftHandPos2d.x) >= HOLD_TOLERANCE) || (abs(leftHandPositionTemp.y - leftHandPos2d.y) >= HOLD_TOLERANCE)) {
           timer3 = millis();
           leftHandPositionTemp = new PVector(leftHandPos2d.x,leftHandPos2d.y);
         } else {
@@ -317,7 +317,7 @@ void checkStateMenu1()
         }
       } else if (tangan == KANAN) {
 
-        if ((abs(rightHandPositionTemp.x - rightHandPos2d.x) >= HOLD_TOLERANCE) && (abs(rightHandPositionTemp.y - rightHandPos2d.y) >= HOLD_TOLERANCE)) {
+        if ((abs(rightHandPositionTemp.x - rightHandPos2d.x) >= HOLD_TOLERANCE) || (abs(rightHandPositionTemp.y - rightHandPos2d.y) >= HOLD_TOLERANCE)) {
           timer3 = millis();
           rightHandPositionTemp = new PVector(rightHandPos2d.x,rightHandPos2d.y);
         } else {

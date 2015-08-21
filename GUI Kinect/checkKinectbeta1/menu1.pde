@@ -208,7 +208,7 @@ void checkStateMenu2()
     updateSlider2Position(leftHandPos2d.x, leftHandPos2d.y, rightHandPos2d.x, rightHandPos2d.y);
     if (millis()-timerHold > 100) {
       timerHold = millis();
-      if ((abs(leftHandPositionTemp.x - leftHandPos2d.x) >= HOLD_TOLERANCE) && (abs(leftHandPositionTemp.y - leftHandPos2d.y) >= HOLD_TOLERANCE) && (abs(rightHandPositionTemp.x - rightHandPos2d.x) >= HOLD_TOLERANCE) && (abs(rightHandPositionTemp.y - rightHandPos2d.y )>= HOLD_TOLERANCE)) {
+      if ((abs(leftHandPositionTemp.x - leftHandPos2d.x) >= HOLD_TOLERANCE) || (abs(leftHandPositionTemp.y - leftHandPos2d.y) >= HOLD_TOLERANCE) || (abs(rightHandPositionTemp.x - rightHandPos2d.x) >= HOLD_TOLERANCE) || (abs(rightHandPositionTemp.y - rightHandPos2d.y )>= HOLD_TOLERANCE)) {
         timer3 = millis();
         leftHandPositionTemp = new PVector(leftHandPos2d.x, leftHandPos2d.y);
         rightHandPositionTemp = new PVector(rightHandPos2d.x, rightHandPos2d.y);
@@ -218,7 +218,6 @@ void checkStateMenu2()
           menu2.addChild(panL);
           setupPanR();
           menu2.addChild(panR);
-
           menu2.rotate(-menu2Angle);
           progState = 0;
         }
