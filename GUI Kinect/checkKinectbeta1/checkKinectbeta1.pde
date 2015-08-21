@@ -27,6 +27,9 @@ int play;
 float time;
 int transparency;
 int tangan;
+
+static final int Z_MAX = 5250;
+static final int Z_DEFAULT = 2000;
 static final int KIRI = 0;
 static final int KANAN = 1;
 
@@ -66,6 +69,7 @@ void setup()
   
   
   stroke(0,0,255);
+  strokeWeight(10);
   smooth();
 
   playIcon = loadImage("play.png");
@@ -115,14 +119,13 @@ void draw()
 
     //play and pause action
     if(showPlayPauseAnimation == 1){
-      drawPlayPause(torsoPos2d);
+      drawPlayPause(torsoPos);
     }
     
     if(leftHandPos2d.y <= torsoPos2d.y && rightHandPos2d.y <= torsoPos2d.y){
       //two hands menu
-      //println("Show Menu 2");
-      updateMenu2(torsoPos2d.x,torsoPos2d.y - 150);
-      ;
+      println("Show Menu 2");
+      updateMenu2(torsoPos2d.x,torsoPos2d.y - 150, torsoPos.z);
 
     }else if(leftHandPos2d.y <= torsoPos2d.y || rightHandPos2d.y <= torsoPos2d.y){
       //single hand menu
@@ -131,11 +134,10 @@ void draw()
       }else if(rightHandPos2d.y <= torsoPos2d.y){
         tangan = KANAN;
       }
-      updateMenu1(torsoPos2d.x, torsoPos2d.y - 150);
-      
-      //println("Show Menu 1: " + tangan);
+      updateMenu1(torsoPos2d.x, torsoPos2d.y - 150, torsoPos.z);
+      println("Show Menu 1: " + tangan);
     }else{
-      progState = 0;
+      //state = 0;
     }
   
   
@@ -151,15 +153,15 @@ void draw()
 
 void onNewUser(SimpleOpenNI curContext, int userId)
 {
-  //println("onNewUser - userId: " + userId);
-  //println("\tstart tracking skeleton");
+  println("onNewUser - userId: " + userId);
+  println("\tstart tracking skeleton");
   
   curContext.startTrackingSkeleton(userId);
 }
 
 void onLostUser(SimpleOpenNI curContext, int userId)
 {
-  //println("onLostUser - userId: " + userId);
+  println("onLostUser - userId: " + userId);
 }
 
 void onVisibleUser(SimpleOpenNI curContext, int userId)
@@ -171,7 +173,7 @@ void onVisibleUser(SimpleOpenNI curContext, int userId)
 
 void onNewHand(SimpleOpenNI curContext,int handId,PVector pos)
 {
-  //println("onNewHand - handId: " + handId + ", pos: " + pos);
+  println("onNewHand - handId: " + handId + ", pos: " + pos);
  
   ArrayList<PVector> vecList = new ArrayList<PVector>();
   vecList.add(pos);
@@ -195,7 +197,7 @@ void onTrackedHand(SimpleOpenNI curContext,int handId,PVector pos)
 
 void onLostHand(SimpleOpenNI curContext,int handId)
 {
-  //println("onLostHand - handId: " + handId);
+  println("onLostHand - handId: " + handId);
   handPathList.remove(handId);
 }
 
@@ -205,7 +207,7 @@ void onLostHand(SimpleOpenNI curContext,int handId)
 void onCompletedGesture(SimpleOpenNI curContext,int gestureType, PVector pos)
 {
   if(gestureType == 0){
-    //println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
+    println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
     int handId = context.startTrackingHand(pos);
   }else if (gestureType == 1){
     //toggle play and pause
@@ -213,14 +215,14 @@ void onCompletedGesture(SimpleOpenNI curContext,int gestureType, PVector pos)
       //execute pause command
       showPlayPauseAnimation = 1;
       play = 0;
-      //println("Execute Command Pause");
+      println("Execute Command Pause");
       //executeOSCCommand();
       playPauseTimer = millis();
     }else if(play == 0){
       //execute play command
       showPlayPauseAnimation  = 1;
       play = 1;
-      //println("Execute Command Play");
+      println("Execute Command Play");
       //executeOSCCommand();
       playPauseTimer = millis();
     }
@@ -228,26 +230,30 @@ void onCompletedGesture(SimpleOpenNI curContext,int gestureType, PVector pos)
 }
 
 
-void drawPlayPause(PVector torso2d){
+void drawPlayPause(PVector torso){
+  PVector torsotemp2d = new PVector();
+  context.convertRealWorldToProjective(torso, torsotemp2d);
   time = millis() - playPauseTimer;
   if(time < 500){
       transparency = round(time * 255 / 500);
-      //println(transparency);
+      println(transparency);
   }else if(time >= 500 && time < 1000){
       transparency = round(255 * (2 - (time/500)));
-      //println(transparency);
+      println(transparency);
   }else{
     playPauseTimer = millis();
     showPlayPauseAnimation = 0;
   }
   tint(255, transparency);
   if(play == 1){
-    image(pauseIcon, torso2d.x, torso2d.y);
+    pauseIcon.resize(0,round(Z_MAX * 30 / torso.z));
+    image(pauseIcon, torsotemp2d.x - (pauseIcon.width/2), torsotemp2d.y - (playIcon.height/2));
+
   }else if(play == 0){
-    image(playIcon, torso2d.x, torso2d.y);
+    playIcon.resize(0,round(Z_MAX * 30 / torso.z));
+    image(playIcon, torsotemp2d.x - (playIcon.width/2), torsotemp2d.y - (playIcon.height/2) );  
   }
  
-  
   tint(255, 255);
 }
 
@@ -256,11 +262,11 @@ void drawPlayPause(PVector torso2d){
 void drawSkeleton(int userId)
 {
   // to get the 3d joint data
-  /*
+  
   PVector jointPos = new PVector();
-  context.getJointPositionSkeleton(userId,SimpleOpenNI.SKEL_NECK,jointPos);
+  context.getJointPositionSkeleton(userId,SimpleOpenNI.SKEL_TORSO,jointPos);
   println(jointPos);
-  */
+  
   
   context.drawLimb(userId, SimpleOpenNI.SKEL_HEAD, SimpleOpenNI.SKEL_NECK);
 
