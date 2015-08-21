@@ -1,5 +1,5 @@
 static final float step = 0.1;
-static final float tolerance = 10;
+static final float tolerance = 10, HOLD_TOLERANCE = 20;
 static final float timeIn = 1000, timeOut = 1000;
 static final int PAN_DIVISION = 4, VOLUME_DIVISION = 10;
 
@@ -106,6 +106,7 @@ void setupSlider2()
 
 void setupMenu2(float x, float y, float s)
 {
+  strokeWeight(0);
   setupHandleMenu2();  
   setupPanR();
   setupPanL();
@@ -123,13 +124,15 @@ void setupMenu2(float x, float y, float s)
 
 void updateMenu2(float x, float y)
 {
+  strokeWeight(0);
   shape(menu2, x, y);
   menu2X = x;
   menu2Y = y;
   if (progState != 2)
   {
-    overPanL = isInsidePanL(leftHandPos.x, leftHandPos.y, tolerance);
-    overPanR = isInsidePanR(rightHandPos.x, rightHandPos.y, tolerance);
+    overPanL = isInsidePanL(leftHandPos2d.x, leftHandPos2d.y, tolerance);
+    println("Hand Position X : " + leftHandPos2d.x + " Y : " + leftHandPos2d.y );
+    overPanR = isInsidePanR(rightHandPos2d.x, rightHandPos2d.y, tolerance);
   }
   checkStateMenu2();
   if (progState == 2)
@@ -148,6 +151,7 @@ boolean isInsidePanL(float x, float y, float rad)
   float r = (diameterMenu2/2) - (thicknessMenu2/2);
   float a = menu2X - r*sin(phi);
   float b = menu2Y - r*cos(phi);
+  println("Menu Position X : " + a + " Y : " + b ); 
   if (sq(a-x)+sq(b-y) <= sq(rad+(thicknessMenu2/2)))
     return true;
   return false;
@@ -175,6 +179,7 @@ void checkStateMenu2()
     }
   } else if (progState == 1)
   {
+    println("Pan Left : " + overPanL + " Pan Right : " + overPanR);
     if (overPanL | overPanR)
     {
       if (millis() - startMs > timeIn)
@@ -185,6 +190,10 @@ void checkStateMenu2()
         slider2PosY = slider2StartPosY;
         slider2PosX = slider2StartPosX;
         setupSlider2();
+        timer3 = millis();
+        timerHold = timer3;
+        leftHandPositionTemp = new PVector(leftHandPos2d.x, leftHandPos2d.y);
+        rightHandPositionTemp = new PVector(rightHandPos2d.x, rightHandPos2d.y);
       }
       panL.setFill(color(100, 200, 0, 255));
       panR.setFill(color(100, 200, 0, 255));
@@ -197,20 +206,23 @@ void checkStateMenu2()
   } else if (progState == 2)
   {
     updateSlider2Position(leftHandPos2d.x, leftHandPos2d.y, rightHandPos2d.x, rightHandPos2d.y);
-    
-      if((leftHandPositionTemp.x - leftHandPos2d.x >= tolerance) && (leftHandPositionTemp.y - leftHandPos2d.y >= tolerance) && (rightHandPositionTemp.x - rightHandPos2d.x >= tolerance) && (rightHandPositionTemp.y - rightHandPos2d.y >= tolerance)){
+    if (millis()-timerHold > 100) {
+      timerHold = millis();
+      if ((abs(leftHandPositionTemp.x - leftHandPos2d.x) >= HOLD_TOLERANCE) || (abs(leftHandPositionTemp.y - leftHandPos2d.y) >= HOLD_TOLERANCE) || (abs(rightHandPositionTemp.x - rightHandPos2d.x) >= HOLD_TOLERANCE) || (abs(rightHandPositionTemp.y - rightHandPos2d.y )>= HOLD_TOLERANCE)) {
         timer3 = millis();
-      }else{
-        if(millis() - timer3 >= timeIn){
-           setupPanL();
-      menu2.addChild(panL);
-      setupPanR();
-      menu2.addChild(panR);
-
-      menu2.rotate(-menu2Angle);
-      progState = 0;
+        leftHandPositionTemp = new PVector(leftHandPos2d.x, leftHandPos2d.y);
+        rightHandPositionTemp = new PVector(rightHandPos2d.x, rightHandPos2d.y);
+      } else {
+        if (millis() - timer3 >= timeIn) {
+          setupPanL();
+          menu2.addChild(panL);
+          setupPanR();
+          menu2.addChild(panR);
+          menu2.rotate(-menu2Angle);
+          progState = 0;
         }
       }
+    }
   }
 }
 
@@ -221,12 +233,12 @@ void updateSlider2Position(float x, float y, float x2, float y2)
   boolean lock = false;
   float acceptance = 0.01;
   float slider2ToAngle;
-  if(meanY < menu2Y)
+  if (meanY < menu2Y)
     slider2ToAngle = atan((meanX - menu2X) / (meanY - menu2Y));
   else
     slider2ToAngle = -atan((meanX - menu2X) / (meanY - menu2Y));
   float smoothness = 10;
-  
+
   // harus ditambah constraint supaya slider ga lebih dari handle
   if ((slider2ToAngle < slider2Angle ) && (slider2Angle > (-radians(thetaMenu2 - slider2Width/2))) )
   {
@@ -247,6 +259,7 @@ void updateSlider2Position(float x, float y, float x2, float y2)
 
 void sendPanMessage()
 {
-   int panning = (int)(degrees(slider2Angle)/(thetaMenu2-slider2Width/2)*PAN_DIVISION); 
-   println(panning);
+  int panning = (int)(degrees(slider2Angle)/(thetaMenu2-slider2Width/2)*PAN_DIVISION); 
+  println(panning);
 }
+
