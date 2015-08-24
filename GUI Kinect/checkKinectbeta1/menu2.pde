@@ -1,6 +1,6 @@
 static final float step = 0.1;
-static final float tolerance = 10, HOLD_TOLERANCE = 20;
-static final float timeIn = 1000, timeOut = 1000;
+static final float tolerance = 25, HOLD_TOLERANCE = 20;
+static final float timeIn = 1500, timeOut = 1000;
 static final int PAN_DIVISION = 4, VOLUME_DIVISION = 10;
 
 PShape handle2, handle1, panL, panR, menu2, hand, slider2, slider1, menu1, prev, next, vol;
@@ -19,7 +19,7 @@ float handX, handY;
 float slider2PosX, slider2PosY;
 float slider2StartPosX, slider2StartPosY;
 float slider2Angle, slider2Width = panWidth;
-
+float scaleTemp2 = 1;
 
 void setupHandleMenu2()
 {
@@ -126,6 +126,8 @@ void updateMenu2(float x, float y, float z)
 {
   strokeWeight(0);
   shape(menu2, x, y);
+  menu2.scale(Z_DEFAULT/(z*scaleTemp2)) ;
+  scaleTemp2 = Z_DEFAULT / z;
   menu2X = x;
   menu2Y = y;
   if (progState != 2)
@@ -213,7 +215,7 @@ void checkStateMenu2()
         leftHandPositionTemp = new PVector(leftHandPos2d.x, leftHandPos2d.y);
         rightHandPositionTemp = new PVector(rightHandPos2d.x, rightHandPos2d.y);
       } else {
-        if (millis() - timer3 >= timeIn) {
+        if (millis() - timer3 >= timeOut) {
           setupPanL();
           menu2.addChild(panL);
           setupPanR();

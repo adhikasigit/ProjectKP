@@ -10,7 +10,7 @@ float volWidth = 60, volPos = 0;
 float slider1PosX, slider1PosY;
 float slider1StartPosX, slider1StartPosY;
 float slider1Angle, slider1Width = 30;
-float scaleTemp;
+float scaleTemp1 = 1;
 
 int timer3, timerHold;
 
@@ -148,9 +148,10 @@ void updateMenu1(float x, float y, float z)
 {
   strokeWeight(0);
   shape(menu1, x, y);
-  menu1.scale(Z_DEFAULT/(z*scaleTemp)) ;
-  scaleTemp = Z_DEFAULT / z;
-  println("Scale: " + scaleTemp);
+  //println("kedraw kok");
+  menu1.scale(Z_DEFAULT/(z*scaleTemp1)) ;
+  scaleTemp1 = Z_DEFAULT / z;
+  println("Scale: " + scaleTemp1);
   menu1X = x;
   menu1Y = y;
   //println("Program State : " + progState);
@@ -307,7 +308,7 @@ void checkStateMenu1()
           timer3 = millis();
           leftHandPositionTemp = new PVector(leftHandPos2d.x,leftHandPos2d.y);
         } else {
-          if (millis() - timer3 >= timeIn + 1000) {
+          if (millis() - timer3 >= timeOut) {
             setupPrev();
             menu1.addChild(prev);
             setupNext();
@@ -324,7 +325,7 @@ void checkStateMenu1()
           timer3 = millis();
           rightHandPositionTemp = new PVector(rightHandPos2d.x,rightHandPos2d.y);
         } else {
-          if (millis() - timer3 >= timeIn + 1000) {
+          if (millis() - timer3 >= timeOut) {
             setupPrev();
             menu1.addChild(prev);
             setupNext();
