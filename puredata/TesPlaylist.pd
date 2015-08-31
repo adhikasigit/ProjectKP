@@ -7,7 +7,7 @@
 #X msg 646 139 stop;
 #X obj 723 167 readsf~ 2;
 #X obj 736 416 dac~ 1 2;
-#X obj 821 189 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+#X obj 819 223 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X obj 239 180 env~;
 #X obj 402 189 env~;
@@ -17,14 +17,14 @@
 #X obj 398 235 - 100;
 #X obj 666 345 *~ 0.1;
 #X obj 817 349 *~ 0.1;
-#X obj 607 191 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
+#X obj 610 192 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
 -1 -1 0 1;
 #X obj 905 198 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
 -1 -1 0 1;
 #X text 927 253 Right channel volume;
 #X text 624 248 Left channel volume;
 #X msg 905 151 seek \$1;
-#X obj 957 96 hsl 128 15 0 320 0 0 empty empty empty -2 -8 0 10 -262144
+#X obj 980 13 hsl 128 15 0 320 0 0 empty empty empty -2 -8 0 10 -262144
 -1 -1 0 1;
 #X msg 909 371 connect 127.0.0.1 12000;
 #X obj 879 424 sendOSC;
@@ -53,9 +53,9 @@
 #X obj 1001 570 send prev;
 #X obj 452 571 routeOSC /start /pause /play;
 #X obj 604 24 receive start;
-#X obj 471 55 udpreceive 12004;
-#X obj 478 107 unpackOSC;
-#X obj 502 150 routeOSC /volume;
+#X obj 500 -28 udpreceive 12004;
+#X obj 512 31 unpackOSC;
+#X obj 511 83 routeOSC /volume;
 #X connect 0 0 1 0;
 #X connect 2 0 4 0;
 #X connect 3 0 4 0;

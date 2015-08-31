@@ -46,7 +46,7 @@ PImage pauseIcon;
 void setup()
 {
   size(640, 480, P3D);
-  s = loadShape("next.svg");
+  //s = loadShape("next.svg");
   context = new SimpleOpenNI(this);
   if (context.isInit() == false)
   {
@@ -145,7 +145,7 @@ void draw()
       
     }
     //println("Program State " + progState);
-    shape(s,10,10,80,80);
+    //shape(s,10,10,80,80);
   }
 
 

@@ -1,4 +1,4 @@
-fstatic final float step = 0.1;
+static final float step = 0.1;
 static final float tolerance = 25, HOLD_TOLERANCE = 20;
 static final float timeIn = 1500, timeOut = 1000;
 static final int PAN_DIVISION = 4, VOLUME_DIVISION = 10;

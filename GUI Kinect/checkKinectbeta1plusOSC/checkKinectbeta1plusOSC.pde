@@ -1,6 +1,19 @@
+import oscP5.*;
+import netP5.*;
+
 import SimpleOpenNI.*;
 import java.util.Map;
 import java.util.Iterator;
+
+OscP5 oscP5;
+
+NetAddress port1;
+NetAddress port2;
+NetAddress port3;
+NetAddress port4;
+
+boolean playId = false;
+boolean start = false;
 
 SimpleOpenNI  context;
 color[]       userClr = new color[] { 
@@ -28,7 +41,7 @@ PVector neckPos2d = new PVector();
 int showPlayPauseAnimation = 0;
 int state;
 int playPauseTimer;
-int play;
+int play = 0;
 int songId;
 float time;
 int transparency;
@@ -49,6 +62,14 @@ void setup()
   size(640, 480, P3D);
   s = loadShape("next.svg");
   context = new SimpleOpenNI(this);
+  
+   oscP5 = new OscP5(this,12000);
+  
+  port1 = new NetAddress("127.0.0.1",12002);
+  port2 = new NetAddress("127.0.0.1",12003);
+  port3 = new NetAddress("127.0.0.1",12004);
+  port4 = new NetAddress("127.0.0.1",12005);
+  
   if (context.isInit() == false)
   {
     println("Can't init SimpleOpenNI, maybe the camera is not connected!"); 
@@ -146,7 +167,7 @@ void draw()
       
     }
     //println("Program State " + progState);
-    shape(s,10,10,80,80);
+    //shape(s,10,10,80,80);
   }
 
 
@@ -219,7 +240,7 @@ void onCompletedGesture(SimpleOpenNI curContext, int gestureType, PVector pos)
       //execute pause command
        OscMessage myOscMessage = new OscMessage("/limp/pause");
        oscP5.send(myOscMessage, port1);
-       playId = false;
+       play = 0;
       showPlayPauseAnimation = 1;
       play = 0;
       println("Execute Command Pause");
@@ -229,19 +250,25 @@ void onCompletedGesture(SimpleOpenNI curContext, int gestureType, PVector pos)
       //execute play command
       if(!start){
         start = true;
-        playId = true;
-        //OscMessage myOscMessage4 = new OscMessage("/playlist");
-        //oscP5.send(myOscMessage4, port4);
-        /*OscMessage myOscMessage3 = new OscMessage("/volume");
+        OscMessage myOscMessage4 = new OscMessage("/playlist");
+        oscP5.send(myOscMessage4, port4);
+        OscMessage myOscMessage3 = new OscMessage("/volume");
         myOscMessage3.add((float)0.500);
         oscP5.send(myOscMessage3, port3);
         OscMessage myOscMessage2 = new OscMessage("/songid");
         myOscMessage2.add((int)songId);
-        oscP5.send(myOscMessage2, port2); */
+        oscP5.send(myOscMessage2, port2);
         OscMessage myOscMessage1 = new OscMessage("/limp/play");
         oscP5.send(myOscMessage1, port1);
-        /*OscMessage myOscMessage = new OscMessage("/limp/start");
-        oscP5.send(myOscMessage, port1);*/
+        OscMessage myOscMessage = new OscMessage("/limp/start");
+        oscP5.send(myOscMessage, port1);
+        play = 1;
+      }
+      else{
+         OscMessage myOscMessage = new OscMessage("/limp/play");
+        oscP5.send(myOscMessage, port1);
+        play = 1;
+        
     }
       showPlayPauseAnimation  = 1;
       play = 1;

@@ -376,10 +376,11 @@ void sendVolumeMessage()
 {
   float volume = (degrees(slider1Angle)/(thetaMenu2-slider1Width/2)); 
   volume = (volume + 1) / 2;
-  OscMessage myOscMessage3 = new OscMessage("/");
-  myOscMessage3.add((float)volume);
-  //print("Volume ");
-  //println(volume);
+  OscMessage myOscMessage3 = new OscMessage("/volume");
+  myOscMessage3.add(volume);
+  print("Volume ");
+  println(volume);
+  
 }
 
 void sendPrevMessage()
