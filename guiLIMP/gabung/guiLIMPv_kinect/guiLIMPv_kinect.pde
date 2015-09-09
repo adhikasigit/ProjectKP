@@ -32,7 +32,7 @@ String namaFile = "lorem ipsum";
 Knob volume;
 Slider panning, seek;
 DropdownList equalizer;
-Button play, next, prev, kinect;
+Button play, next, prev, kinect, playlist;
 Textlabel judul;
 
 
@@ -48,7 +48,6 @@ void setup() {
   port2 = new NetAddress("127.0.0.1",12003);
   port3 = new NetAddress("127.0.0.1",12004);
   port4 = new NetAddress("127.0.0.1",12005);
-  
   
   oscP5.plug(this,"test","/test");
   
@@ -151,6 +150,16 @@ void setup() {
               .update()
                 .setSwitch(true)
                   ;
+  playlist = cp5.addButton("Choose Playlist")
+    .setPosition(225, 20)
+      .setSize(100, 20)
+        .setColorBackground(color(50, 50, 50))
+          .setColorActive(color(90, 90, 90))
+            .setColorForeground(color(90, 90, 90))
+              .update()
+                .setSwitch(true)
+                  ;
+            
 }
 
 void customize(DropdownList eq) {
@@ -174,10 +183,8 @@ void draw() {
     if(!start){
         start = true;
         playId = true;
-        //OscMessage myOscMessage4 = new OscMessage("/playlist");
-        //oscP5.send(myOscMessage4, port4);
         OscMessage myOscMessage3 = new OscMessage("/volume");
-        myOscMessage3.add((float)0.500);
+        myOscMessage3.add((float)volumeValue);
         oscP5.send(myOscMessage3, port3);
         OscMessage myOscMessage2 = new OscMessage("/songid");
         myOscMessage2.add((int)songId);
@@ -219,12 +226,26 @@ void draw() {
     oscP5.send(myOscMessage1, port1);
     delay(500);
   }
-
+  if(playlist.isPressed()){
+    OscMessage myOscMessage4 = new OscMessage("/playlist");
+    oscP5.send(myOscMessage4, port4);
+    delay(500);
+  }
+  if (!volume.isUpdate())
+  {
+    println(volume.getValue());
+    volumeValue = volume.getValue() / 100;
+    OscMessage myOscMessage3 = new OscMessage("/volume");
+    myOscMessage3.add((float)volumeValue);
+    oscP5.send(myOscMessage3, port3);
+  }
+  
   if (kinect.isOn()) f.show();
   if (!kinect.isOn()) f.hide();
 
-  println(equalizer.getValue());
-  println(songId);
+  //println(equalizer.getValue());
+  //println(songId);
+  //println(volume.getValue());
 }
 
 

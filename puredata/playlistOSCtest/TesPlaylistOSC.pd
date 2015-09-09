@@ -18,9 +18,9 @@
 #X obj 666 345 *~ 0.1;
 #X obj 817 349 *~ 0.1;
 #X obj 607 191 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 6350 1;
+-1 -1 63 1;
 #X obj 905 198 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 6350 1;
+-1 -1 63 1;
 #X text 927 253 Right channel volume;
 #X text 624 248 Left channel volume;
 #X msg 905 151 seek \$1;
@@ -58,10 +58,8 @@
 #X obj 727 -56 bb_filebrowser;
 #X obj 1026 -181 unpackOSC;
 #X obj 993 -138 routeOSC /playlist;
-#X obj 924 -114 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
 #X obj 987 -95 print;
-#X obj 1044 -209 udpreceive 12002;
+#X obj 1044 -209 udpreceive 12005;
 #X connect 0 0 1 0;
 #X connect 2 0 4 0;
 #X connect 3 0 4 0;
@@ -112,6 +110,5 @@
 #X connect 50 1 35 0;
 #X connect 51 0 52 0;
 #X connect 52 0 53 0;
-#X connect 52 0 54 0;
-#X connect 53 0 50 1;
-#X connect 55 0 51 0;
+#X connect 52 0 50 1;
+#X connect 54 0 51 0;
